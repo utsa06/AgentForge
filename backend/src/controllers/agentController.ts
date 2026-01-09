@@ -76,7 +76,7 @@ export const deleteAgent = async (req: Request, res: Response) => {
 export const executeAgent = async (req: Request, res: Response) => {
   try {
     const agentId = req.params.id;
-    
+
     const agent = await Agent.findOne({ _id: agentId, userId: TEST_USER_ID });
     if (!agent) {
       return res.status(404).json({ error: 'Agent not found' });
@@ -123,17 +123,46 @@ export const getAgentExecutions = async (req: Request, res: Response) => {
   try {
     const agentId = req.params.id;
     const limit = parseInt(req.query.limit as string) || 10;
-    
-    const executions = await Execution.find({ 
-      agentId, 
-      userId: TEST_USER_ID 
+
+    const executions = await Execution.find({
+      agentId,
+      userId: TEST_USER_ID
     })
       .sort({ createdAt: -1 })
       .limit(limit);
-    
+
     res.json(executions);
   } catch (error) {
     console.error('Get executions error:', error);
     res.status(500).json({ error: 'Failed to fetch executions' });
+  }
+};
+
+
+
+export const executeAdHocAgent = async (req: Request, res: Response) => {
+  try {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is required' });
+    }
+
+    console.log(`🚀 Executing Ad-Hoc Agent: "${prompt}"`);
+
+    // Use smart agent logic directly without saving anything
+    const aiResponse = await import('../services/smartAgentExecutor').then(m => m.runAgnoAgent(prompt));
+
+    res.json({
+      status: 'success',
+      data: {
+        output: aiResponse,
+        timestamp: new Date()
+      }
+    });
+
+  } catch (error: any) {
+    console.error('Execute ad-hoc error:', error);
+    res.status(500).json({ error: error.message || 'Failed to execute ad-hoc agent' });
   }
 };

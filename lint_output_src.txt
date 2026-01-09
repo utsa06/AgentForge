@@ -1,0 +1,154 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\App.tsx
+  3:78  error  'Layers' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\ExecutionViewer.tsx
+  21:12  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  27:13  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  40:5   error    Error: Cannot access variable before it is declared
+
+`loadExecutions` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\ExecutionViewer.tsx:40:5
+  38 |
+  39 |   useEffect(() => {
+> 40 |     loadExecutions();
+     |     ^^^^^^^^^^^^^^ `loadExecutions` accessed before it is declared
+  41 |     const interval = setInterval(loadExecutions, 2000); // Poll every 2 seconds
+  42 |     return () => clearInterval(interval);
+  43 |   }, [agentId]);
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\ExecutionViewer.tsx:45:3
+  43 |   }, [agentId]);
+  44 |
+> 45 |   const loadExecutions = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     try {
+     | ^^^^^^^^^
+> 47 |       const data = await agentService.getExecutions(agentId);
+     | ^^^^^^^^^
+> 48 |       setExecutions(data);
+     | ^^^^^^^^^
+> 49 |       setLoading(false);
+     | ^^^^^^^^^
+> 50 |     } catch (error) {
+     | ^^^^^^^^^
+> 51 |       console.error('Failed to load executions:', error);
+     | ^^^^^^^^^
+> 52 |       setLoading(false);
+     | ^^^^^^^^^
+> 53 |     }
+     | ^^^^^^^^^
+> 54 |   };
+     | ^^^^^ `loadExecutions` is declared here
+  55 |
+  56 |   const toggleResult = (resultId: string) => {
+  57 |     setExpandedResults(prev => {  react-hooks/immutability
+  43:6   warning  React Hook useEffect has a missing dependency: 'loadExecutions'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/exhaustive-deps
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\agent-builder\Canvas.tsx
+   24:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  130:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\agent-builder\PropertiesPanel.tsx
+  11:40  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  15:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\agent-builder\PropertiesPanel.tsx:15:7
+  13 |   useEffect(() => {
+  14 |     if (selectedNode) {
+> 15 |       setLabel(selectedNode.data.label);
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  16 |       setDescription(selectedNode.data.description || '');
+  17 |       setConfig(selectedNode.data.config || {});
+  18 |     }  react-hooks/set-state-in-effect
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\agent-builder\nodes\CustomNode.tsx
+  14:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\common\HeroPreview.tsx
+   2:41  error    'ArrowRight' is defined but never used                                                                           @typescript-eslint/no-unused-vars
+  19:6   warning  React Hook useEffect has a missing dependency: 'nodes.length'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\components\dashboard\AgentCard.tsx
+  8:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  9:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\lib\templateRegistry.ts
+  8:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\pages\AgentBuilder.tsx
+   60:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  131:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\pages\Dashboard.tsx
+   2:31  error  'Activity' is defined but never used                  @typescript-eslint/no-unused-vars
+  16:10  error  'executingAgents' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  28:16  error  'error' is defined but never used                     @typescript-eslint/no-unused-vars
+  44:21  error  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\pages\NLAgentCreator.tsx
+   14:38  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+  102:22  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\pages\NLAgentCreator.tsx:102:22
+  100 |     try {
+  101 |       const savedAgent = await saveAgent({
+> 102 |         id: `agent_${Date.now()}`,
+      |                      ^^^^^^^^^^ Cannot call impure function
+  103 |         ...newAgent,
+  104 |         createdAt: new Date().toISOString(),
+  105 |         updatedAt: new Date().toISOString(),  react-hooks/purity
+  118:18  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+  119:18  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\pages\Profile.tsx
+  2:20  error  'User' is defined but never used  @typescript-eslint/no-unused-vars
+  2:26  error  'Mail' is defined but never used  @typescript-eslint/no-unused-vars
+  2:32  error  'Key' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\pages\TemplatePage.tsx
+   3:32  error  'Template' is defined but never used      @typescript-eslint/no-unused-vars
+  12:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  63:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\services\agentService.ts
+   6:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  58:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:19  error  'id' is defined but never used            @typescript-eslint/no-unused-vars
+  73:25  error  'id' is defined but never used            @typescript-eslint/no-unused-vars
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\store\agentStore.ts
+   9:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  59:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\store\canvasStore.ts
+  12:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\src\types\agent.types.ts
+  7:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Desktop\ws\wintersolictice_2025 - Copy\tailwind.config.js
+  11:1  error  Parsing error: Unexpected token
+
+✖ 47 problems (45 errors, 2 warnings)
+

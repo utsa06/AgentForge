@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Execution from '../models/Execution';
 import Agent from '../models/Agent';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -40,21 +41,9 @@ export async function executeSmartAgent(agentId: string, userId: string) {
 }
 
 async function executeWithAI(description: string, executionId: string) {
-  const apiKey = process.env.GEMINI_API_KEY;
-
-  if (!apiKey) {
-    await logExecution(executionId, 'warning', '⚠️ GEMINI_API_KEY not set - simulation mode enabled');
-    return simulateExecution(description, executionId);
-  }
-
   try {
- const genAI = new GoogleGenerativeAI(apiKey);
+    await logExecution(executionId, 'info', '🐍 Delegating task to Agno (Python) Engine...');
 
-// 'gemini-2.0-flash-lite' is the 2026 standard for high-quota free tier
-const model = genAI.getGenerativeModel(
-  { model: "gemini-2.0-flash-lite" }, // Lite has the most reliable free quota
-  { apiVersion: "v1" }
-);
     const prompt = `
 You are an AI automation agent. Understand this user automation task and generate a structured execution plan.
 Task: "${description}"
@@ -72,12 +61,10 @@ Return STRICT JSON ONLY. Format exactly like:
 }
 `;
 
-    await logExecution(executionId, 'info', '🤖 AI analyzing task...');
-    const result = await model.generateContent(prompt);
-    const response = result.response.text();
+    const aiResponse = await runAgnoAgent(prompt);
+    await logExecution(executionId, 'info', '✅ Agno Agent generated execution plan');
 
-    await logExecution(executionId, 'info', '✅ AI generated execution plan');
-    const plan = parseAIJson(response);
+    const plan = parseAIJson(aiResponse);
 
     if (plan?.steps?.length) {
       for (const step of plan.steps) {
@@ -85,15 +72,15 @@ Return STRICT JSON ONLY. Format exactly like:
       }
     }
 
-    // FIX 2: Call the real action executor
+    // Execute real actions (Node.js handles side effects)
     await executeRealActions(plan, executionId);
 
     await Execution.findByIdAndUpdate(executionId, {
       $push: {
         results: {
-          nodeId: 'ai-planner',
+          nodeId: 'agno-planner',
           nodeType: 'smart-execution',
-          nodeLabel: 'AI Task Planner',
+          nodeLabel: 'Agno AI Planner',
           result: plan,
           timestamp: new Date()
         }
@@ -103,8 +90,24 @@ Return STRICT JSON ONLY. Format exactly like:
     return plan;
 
   } catch (error: any) {
-    await logExecution(executionId, 'error', `❌ AI execution failed: ${error.message}`);
+    await logExecution(executionId, 'error', `❌ Hybrid Execution Failed: ${error.message}`);
     throw error;
+  }
+}
+
+export async function runAgnoAgent(prompt: string) {
+  const pythonServiceUrl = process.env.PYTHON_AGENT_URL || 'http://localhost:5001/api/agno/agent';
+
+  try {
+    const response = await axios.post(pythonServiceUrl, { prompt });
+
+    if (response.data.error) {
+      throw new Error(`Python Service Error: ${response.data.error}`);
+    }
+
+    return response.data.response;
+  } catch (error: any) {
+    throw new Error(`Failed to contact Python AI Engine: ${error.message}`);
   }
 }
 
@@ -178,7 +181,7 @@ function parseAIJson(text: string) {
 async function simulateExecution(description: string, executionId: string) {
   // FIX 4: Removed the stray "import" and "await" snippets that were pasted here
   const lower = description.toLowerCase();
-  
+
   if (lower.includes('analyze')) {
     await logExecution(executionId, 'info', '🤖 Simulating AI analysis...');
   }

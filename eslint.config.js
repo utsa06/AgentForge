@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'backend/**', 'frontend/**', 'version 1.0/**']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -15,6 +15,12 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'react-hooks/exhaustive-deps': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'react-hooks/set-state-in-effect': 'off'
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

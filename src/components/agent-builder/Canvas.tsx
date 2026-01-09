@@ -1,3 +1,5 @@
+// FILE: src/components/agent-builder/Canvas.tsx
+
 import React, { useCallback, useRef } from 'react';
 import ReactFlow, {
   Background,
@@ -7,6 +9,8 @@ import ReactFlow, {
   useEdgesState,
   BackgroundVariant,
   type OnConnect,
+  ConnectionLineType,
+  MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { nodeTypes } from './nodes/nodeTypes';
@@ -39,10 +43,20 @@ interface AgentEdge {
 let nodeId = 0;
 const getId = () => `node_${nodeId++}`;
 
+const defaultEdgeOptions = {
+  type: 'smoothstep',
+  animated: true,
+  style: { stroke: '#94a3b8', strokeWidth: 2 },
+  markerEnd: {
+    type: MarkerType.ArrowClosed,
+    color: '#94a3b8',
+  },
+};
+
 export const Canvas: React.FC = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { nodes, edges, addNode, addEdge: addStoreEdge, setSelectedNode, setNodes, setEdges } = useCanvasStore();
-  
+
   const [rfNodes, setRfNodes, onNodesChange] = useNodesState(nodes);
   const [rfEdges, setRfEdges, onEdgesChange] = useEdgesState(edges);
 
@@ -68,6 +82,7 @@ export const Canvas: React.FC = () => {
         id: `edge_${Date.now()}`,
         source: params.source!,
         target: params.target!,
+        type: 'smoothstep', // Ensure connected edges are also smoothstep
       };
       addStoreEdge(edge);
     },
@@ -135,12 +150,16 @@ export const Canvas: React.FC = () => {
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionLineType={ConnectionLineType.SmoothStep}
+        connectionLineStyle={{ stroke: '#cbd5e1', strokeWidth: 2 }}
         fitView
+        className="animate-in fade-in duration-700"
       >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#334155" />
-        <Controls className="bg-slate-800 border border-slate-700" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="#334155" />
+        <Controls className="bg-slate-800/80 backdrop-blur-md border border-slate-700 !shadow-none !rounded-lg" />
         <MiniMap
-          className="bg-slate-800 border border-slate-700"
+          className="!bg-slate-800/80 !backdrop-blur-md !border !border-slate-700 !rounded-lg !shadow-none"
           nodeColor={(node) => {
             switch (node.type) {
               case 'trigger': return '#10b981';
@@ -150,6 +169,7 @@ export const Canvas: React.FC = () => {
               default: return '#64748b';
             }
           }}
+          maskColor="rgba(15, 23, 42, 0.6)"
         />
       </ReactFlow>
     </div>

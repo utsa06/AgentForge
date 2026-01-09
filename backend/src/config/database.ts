@@ -5,7 +5,7 @@ export const connectDatabase = async () => {
     const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-agent-builder');
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
-    process.exit(1);
+    console.warn('⚠️ MongoDB connection failed. Server continuing in non-persistent mode.');
+    // process.exit(1); // Allow server to start even if DB fails
   }
 };

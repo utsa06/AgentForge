@@ -1,45 +1,12 @@
 import { create } from 'zustand';
 import { agentService } from '../services/agentService';
-
-type NodeType = 'trigger' | 'action' | 'condition' | 'data';
-
-interface NodeData {
-  label: string;
-  type: NodeType;
-  config?: { [key: string]: any };
-  description?: string;
-}
-
-interface AgentNode {
-  id: string;
-  type: string;
-  position: { x: number; y: number };
-  data: NodeData;
-}
-
-interface AgentEdge {
-  id: string;
-  source: string;
-  target: string;
-}
-
-interface Agent {
-  _id?: string;
-  id: string;
-  name: string;
-  description: string;
-  nodes: AgentNode[];
-  edges: AgentEdge[];
-  createdAt: string;
-  updatedAt: string;
-  status: 'draft' | 'active' | 'paused';
-}
+import type { Agent } from '../types/agent.types';
 
 interface AgentState {
   agents: Agent[];
   currentAgent: Agent | null;
   loading: boolean;
-  
+
   loadAgents: () => Promise<void>;
   saveAgent: (agent: Agent) => Promise<void>;
   deleteAgent: (id: string) => Promise<void>;
@@ -51,7 +18,7 @@ export const useAgentStore = create<AgentState>((set, get) => ({
   agents: [],
   currentAgent: null,
   loading: false,
-  
+
   loadAgents: async () => {
     try {
       set({ loading: true });
@@ -62,7 +29,7 @@ export const useAgentStore = create<AgentState>((set, get) => ({
       set({ loading: false });
     }
   },
-  
+
   saveAgent: async (agent) => {
     try {
       if (agent._id) {
@@ -80,7 +47,7 @@ export const useAgentStore = create<AgentState>((set, get) => ({
       throw error;
     }
   },
-  
+
   deleteAgent: async (id) => {
     try {
       await agentService.delete(id);
@@ -90,9 +57,9 @@ export const useAgentStore = create<AgentState>((set, get) => ({
       throw error;
     }
   },
-  
+
   setCurrentAgent: (agent) => set({ currentAgent: agent }),
-  
+
   createNewAgent: () => {
     const newAgent: Agent = {
       id: `agent_${Date.now()}`,

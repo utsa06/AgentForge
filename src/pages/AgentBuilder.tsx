@@ -17,7 +17,7 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ agentId, onBack }) =
   const [agentDescription, setAgentDescription] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
   const { nodes, edges, clearCanvas, setNodes, setEdges } = useCanvasStore();
-  const { agents, saveAgent, createNewAgent } = useAgentStore();
+  const { agents, saveAgent } = useAgentStore();
 
   useEffect(() => {
     if (agentId) {
@@ -81,21 +81,44 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ agentId, onBack }) =
 
     try {
       setIsExecuting(true);
+
+      // Reset node states
+      setNodes(nodes.map(n => ({
+        ...n,
+        data: { ...n.data, active: false, status: 'idle' }
+      })));
+
+      // Simulate step-by-step execution for visual effect
+      const sortedNodes = [...nodes].sort((a, b) => {
+        if (a.data.type === 'trigger') return -1;
+        if (b.data.type === 'trigger') return 1;
+        return 0;
+      });
+
+      for (const node of sortedNodes) {
+        // Highlight current node
+        setNodes((curr: any[]) => curr.map((n: any) =>
+          n.id === node.id
+            ? { ...n, data: { ...n.data, active: true, status: 'running' } }
+            : n
+        ));
+
+        await new Promise(resolve => setTimeout(resolve, 800)); // Visual delay
+
+        // Mark as completed
+        setNodes((curr: any[]) => curr.map((n: any) =>
+          n.id === node.id
+            ? { ...n, data: { ...n.data, active: false, status: 'completed' } }
+            : n
+        ));
+      }
+
       console.log('🚀 Executing agent:', { id: agentId, name: agentName, nodes, edges });
-
       const result = await agentService.execute(agentId);
-      
-      console.log('✅ Execution started:', result);
-      
-      alert(`🚀 Agent execution started!\n\n` +
-        `Agent: ${result.agentName}\n` +
-        `Status: ${result.status}\n\n` +
-        `Your workflow:\n` +
-        nodes.map(n => `- ${n.data.label}`).join('\n') +
-        `\n\nCheck the browser console for execution logs.`
-      );
 
-      // Optionally, fetch execution history after a delay
+      console.log('✅ Execution started:', result);
+
+      // Optionally, fetch execution history
       setTimeout(async () => {
         try {
           const executions = await agentService.getExecutions(agentId);
@@ -103,7 +126,7 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ agentId, onBack }) =
         } catch (err) {
           console.error('Failed to fetch executions:', err);
         }
-      }, 2000);
+      }, 500);
 
     } catch (error: any) {
       console.error('❌ Execution error:', error);
@@ -166,9 +189,8 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ agentId, onBack }) =
             <button
               onClick={handleRun}
               disabled={isExecuting}
-              className={`px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all flex items-center gap-2 ${
-                isExecuting ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+              className={`px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all flex items-center gap-2 ${isExecuting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
             >
               <Play className={`w-4 h-4 ${isExecuting ? 'animate-spin' : ''}`} />
               {isExecuting ? 'Running...' : 'Run Agent'}

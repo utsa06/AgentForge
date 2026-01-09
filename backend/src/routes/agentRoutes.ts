@@ -1,12 +1,13 @@
 import express from 'express';
-import { 
-  createAgent, 
-  getAgents, 
-  getAgent, 
-  updateAgent, 
+import {
+  createAgent,
+  getAgents,
+  getAgent,
+  updateAgent,
   deleteAgent,
   executeAgent,
-  getAgentExecutions 
+  getAgentExecutions,
+  executeAdHocAgent
 } from '../controllers/agentController';
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.delete('/:id', deleteAgent);
 // Agent Execution
 router.post('/:id/execute', executeAgent);
 router.post('/:id/run', executeAgent); // Alias
+router.post('/execute-adhoc', executeAdHocAgent); // New Ad-Hoc Route
 router.get('/:id/executions', getAgentExecutions);
 
 export default router;

@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Sparkles, Zap, Brain, Code, Database, Globe, Video, Calendar, Mail, Layers, ArrowRight, CheckCircle, Menu, X, BookTemplate } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
+import { Sparkles, Zap, Brain, Code, Database, Globe, Video, Calendar, Mail, ArrowRight, CheckCircle, Menu, X, BookTemplate, Laptop } from 'lucide-react';
 import { AgentBuilder } from './pages/AgentBuilder';
 import { Dashboard } from './pages/Dashboard';
 import { Templates } from './pages/Templates';
 import { Profile } from './pages/Profile';
 import { NLAgentCreator } from './pages/NLAgentCreator';
+import { TemplatePage } from './pages/TemplatePage';
+import { WebsiteBuilder } from './pages/WebsiteBuilder';
 import { AgentWizard } from './components/wizard/AgentWizard';
 import { GuideBot } from './components/common/GuideBot';
 import { HeroPreview } from './components/common/HeroPreview';
 import { Onboarding } from './components/common/Onboarding';
 
-type Page = 'home' | 'dashboard' | 'builder' | 'templates' | 'profile' | 'nl-creator';
+type Page = 'home' | 'dashboard' | 'builder' | 'templates' | 'profile' | 'nl-creator' | 'template-view' | 'website-builder';
 
-const App = () => {
+const AppContent = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [editingAgentId, setEditingAgentId] = useState<string | undefined>();
+  const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -23,12 +26,32 @@ const App = () => {
     localStorage.getItem('onboarding_completed') === 'true'
   );
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Handle deep linking
+  useEffect(() => {
+    if (location.pathname.startsWith('/templates/')) {
+      const templateId = location.pathname.split('/templates/')[1];
+      if (templateId) {
+        setActiveTemplateId(templateId);
+        setCurrentPage('template-view');
+      }
+    } else if (location.pathname === '/templates') {
+      setCurrentPage('templates');
+    } else if (location.pathname === '/website-builder') {
+      setCurrentPage('website-builder');
+    }
+  }, [location.pathname]);
+
+
   const handleCreateNew = () => {
     setWizardOpen(true);
   };
 
   const handleCreateWithAI = () => {
     setCurrentPage('nl-creator');
+    navigate('/nl-creator'); // Optional: sync URL
   };
 
   const handleWizardComplete = (description: string) => {
@@ -44,8 +67,12 @@ const App = () => {
 
   const handleUseTemplate = (templateId: string) => {
     console.log('Using template:', templateId);
-    setEditingAgentId(undefined);
-    setCurrentPage('builder');
+    // Navigate to the template specific page
+    navigate(`/templates/${templateId}`);
+  };
+
+  const handleTemplateBack = () => {
+    navigate('/templates');
   };
 
   const handleNLAgentCreated = (agentId: string) => {
@@ -113,11 +140,37 @@ const App = () => {
     );
   }
 
-  // Templates Page
+  // Templates Gallery Page
   if (currentPage === 'templates') {
     return (
       <>
-        <Templates onBack={() => setCurrentPage('home')} onUseTemplate={handleUseTemplate} />
+        <Templates onBack={() => {
+          setCurrentPage('home');
+          navigate('/');
+        }} onUseTemplate={handleUseTemplate} />
+        <GuideBot />
+      </>
+    );
+  }
+
+  // Individual Template Page
+  if (currentPage === 'template-view' && activeTemplateId) {
+    return (
+      <>
+        <TemplatePage templateId={activeTemplateId} onBack={handleTemplateBack} />
+        <GuideBot />
+      </>
+    );
+  }
+
+  // Website Builder Page
+  if (currentPage === 'website-builder') {
+    return (
+      <>
+        <WebsiteBuilder onBack={() => {
+          setCurrentPage('home');
+          navigate('/');
+        }} />
         <GuideBot />
       </>
     );
@@ -185,10 +238,12 @@ const App = () => {
         <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
       </div>
 
-      {/* Navigation */}
       <nav className="relative z-10 px-6 py-4 backdrop-blur-xl bg-white/5 border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setCurrentPage('home')}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => {
+            setCurrentPage('home');
+            navigate('/');
+          }}>
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
               <Sparkles className="w-6 h-6" />
             </div>
@@ -197,45 +252,36 @@ const App = () => {
             </span>
           </div>
 
-          {/* ROUTING */}
-
-
-          <BrowserRouter>
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="hover:text-purple-400 transition-colors">Features</a>
-              <a href="#use-cases" className="hover:text-purple-400 transition-colors">Use Cases</a>
-              <button
-                onClick={() => setCurrentPage('templates')}
-                className="hover:text-purple-400 transition-colors flex items-center gap-2"
-              >
-                <BookTemplate className="w-4 h-4" />
-                Templates
-              </button>
-              <Link to="/template"> Template </Link>
-              {/* <button
-                onClick={() => setCurrentPage('dashboard')}
-                className="hover:text-purple-400 transition-colors"
-              >
-                Dashboard
-              </button> */}
-              <Link to="/profile"> Profile </Link>
-              <button
-                onClick={navigateToDashboard}
-                className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:shadow-lg hover:shadow-purple-500/50 transition-all"
-              >
-                Get Started
-              </button>
-            </div>
-            <Routes>
-              {/* <Route path="/" element={<App />} /> */}
-              {/* <Route path="/template" element={<Templates/>} /> */}
-              <Route path="/profile" element={<Profile onBack={() => setCurrentPage('home')} />} />
-            </Routes>
-          </BrowserRouter>
-
-
-
-
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#features" className="hover:text-purple-400 transition-colors">Features</a>
+            <a href="#use-cases" className="hover:text-purple-400 transition-colors">Use Cases</a>
+            <button
+              onClick={() => {
+                setCurrentPage('website-builder');
+                navigate('/website-builder');
+              }}
+              className="hover:text-purple-400 transition-colors flex items-center gap-2"
+            >
+              <Laptop className="w-4 h-4" />
+              Website Builder
+            </button>
+            <button
+              onClick={() => {
+                setCurrentPage('templates');
+                navigate('/templates');
+              }}
+              className="hover:text-purple-400 transition-colors flex items-center gap-2"
+            >
+              <BookTemplate className="w-4 h-4" />
+              Templates
+            </button>
+            <button
+              onClick={navigateToDashboard}
+              className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+            >
+              Get Started
+            </button>
+          </div>
 
           <button
             className="md:hidden"
@@ -251,13 +297,30 @@ const App = () => {
               <a href="#features" className="hover:text-purple-400 transition-colors">Features</a>
               <a href="#use-cases" className="hover:text-purple-400 transition-colors">Use Cases</a>
               <button
-                onClick={() => setCurrentPage('templates')}
-                className="text-left hover:text-purple-400 transition-colors"
+                onClick={() => {
+                  setCurrentPage('website-builder');
+                  navigate('/website-builder');
+                }}
+                className="text-left hover:text-purple-400 transition-colors flex items-center gap-2"
               >
+                <Laptop className="w-4 h-4" />
+                Website Builder
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentPage('templates');
+                  navigate('/templates');
+                }}
+                className="text-left hover:text-purple-400 transition-colors flex items-center gap-2"
+              >
+                <BookTemplate className="w-4 h-4" />
                 Templates
               </button>
               <button
-                onClick={() => setCurrentPage('dashboard')}
+                onClick={() => {
+                  setCurrentPage('dashboard');
+                  navigate('/dashboard');
+                }}
                 className="text-left hover:text-purple-400 transition-colors"
               >
                 Dashboard
@@ -311,7 +374,10 @@ const App = () => {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <button
-              onClick={() => setCurrentPage('templates')}
+              onClick={() => {
+                setCurrentPage('templates');
+                navigate('/templates');
+              }}
               className="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-full text-lg font-semibold hover:bg-white/20 transition-all border border-white/20"
             >
               Browse Templates
@@ -464,5 +530,13 @@ const App = () => {
     </div>
   );
 };
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
 
 export default App;

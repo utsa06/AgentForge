@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, User, Mail, Key, Save, ArrowLeft } from 'lucide-react';
+import { Sparkles, Save, ArrowLeft } from 'lucide-react';
 
 interface ProfileProps {
   onBack: () => void;
@@ -41,7 +41,7 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
           <div className="space-y-6">
             <div>
               <h2 className="text-xl font-bold text-white mb-4">Account Information</h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -71,7 +71,7 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
 
             <div className="border-t border-white/10 pt-6">
               <h2 className="text-xl font-bold text-white mb-4">API Keys</h2>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Agno API Key

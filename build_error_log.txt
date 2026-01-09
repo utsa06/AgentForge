@@ -1,0 +1,48 @@
+
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+src/App.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/common/HeroPreview.tsx(2,41): error TS6133: 'ArrowRight' is declared but its value is never read.
+src/components/ExecutionViewer.tsx(22,21): error TS2345: Argument of type '{ _id: string; startTime: string; status: string; duration: number; logs: { timestamp: string; level: string; message: string; }[]; results: { nodeId: string; nodeType: string; nodeLabel: string; result: { ...; }; timestamp: string; }[]; }[]' is not assignable to parameter of type 'SetStateAction<Execution[]>'.
+  Type '{ _id: string; startTime: string; status: string; duration: number; logs: { timestamp: string; level: string; message: string; }[]; results: { nodeId: string; nodeType: string; nodeLabel: string; result: { ...; }; timestamp: string; }[]; }[]' is not assignable to type 'Execution[]'.
+    Type '{ _id: string; startTime: string; status: string; duration: number; logs: { timestamp: string; level: string; message: string; }[]; results: { nodeId: string; nodeType: string; nodeLabel: string; result: { ...; }; timestamp: string; }[]; }' is not assignable to type 'Execution'.
+      Types of property 'status' are incompatible.
+        Type 'string' is not assignable to type '"running" | "completed" | "failed"'.
+src/lib/templateRegistry.ts(1,77): error TS1484: 'LucideIcon' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/AgentBuilder.tsx(100,18): error TS7006: Parameter 'curr' implicitly has an 'any' type.
+src/pages/AgentBuilder.tsx(100,18): error TS2345: Argument of type '(curr: any) => any' is not assignable to parameter of type 'AgentNode[]'.
+src/pages/AgentBuilder.tsx(100,35): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/pages/AgentBuilder.tsx(109,18): error TS7006: Parameter 'curr' implicitly has an 'any' type.
+src/pages/AgentBuilder.tsx(109,18): error TS2345: Argument of type '(curr: any) => any' is not assignable to parameter of type 'AgentNode[]'.
+src/pages/AgentBuilder.tsx(109,35): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/pages/Dashboard.tsx(2,31): error TS6133: 'Activity' is declared but its value is never read.
+src/pages/Dashboard.tsx(16,10): error TS6133: 'executingAgents' is declared but its value is never read.
+src/pages/NaturalLanguageCreator.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/NaturalLanguageCreator.tsx(35,19): error TS2345: Argument of type '(prev: never[]) => { icon: string; text: string; delay: number; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(prev: never[]) => { icon: string; text: string; delay: number; }[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type '{ icon: string; text: string; delay: number; }[]' is not assignable to type 'never[]'.
+      Type '{ icon: string; text: string; delay: number; }' is not assignable to type 'never'.
+src/pages/NaturalLanguageCreator.tsx(47,14): error TS2345: Argument of type '{ name: string; triggers: string[]; actions: string[]; schedule: string; description: string; }' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type '{ name: string; triggers: string[]; actions: string[]; schedule: string; description: string; }' provides no match for the signature '(prevState: null): null'.
+src/pages/NaturalLanguageCreator.tsx(51,27): error TS7006: Parameter 'text' implicitly has an 'any' type.
+src/pages/NaturalLanguageCreator.tsx(58,26): error TS7006: Parameter 'text' implicitly has an 'any' type.
+src/pages/NaturalLanguageCreator.tsx(68,27): error TS7006: Parameter 'text' implicitly has an 'any' type.
+src/pages/NaturalLanguageCreator.tsx(173,52): error TS2339: Property 'icon' does not exist on type 'never'.
+src/pages/NaturalLanguageCreator.tsx(174,31): error TS2339: Property 'text' does not exist on type 'never'.
+src/pages/NaturalLanguageCreator.tsx(194,53): error TS2339: Property 'name' does not exist on type 'never'.
+src/pages/NaturalLanguageCreator.tsx(201,26): error TS2339: Property 'triggers' does not exist on type 'never'.
+src/pages/NaturalLanguageCreator.tsx(201,40): error TS7006: Parameter 'trigger' implicitly has an 'any' type.
+src/pages/NaturalLanguageCreator.tsx(201,49): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+src/pages/NaturalLanguageCreator.tsx(210,26): error TS2339: Property 'actions' does not exist on type 'never'.
+src/pages/NaturalLanguageCreator.tsx(210,39): error TS7006: Parameter 'action' implicitly has an 'any' type.
+src/pages/NaturalLanguageCreator.tsx(210,47): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+src/pages/NaturalLanguageCreator.tsx(218,65): error TS2339: Property 'schedule' does not exist on type 'never'.
+src/pages/NLAgentCreator.tsx(98,14): error TS2345: Argument of type '{ name: string; description: string; nodes: any[]; edges: any[]; status: "draft"; triggers: string[]; actions: string[]; schedule: string; }' is not assignable to parameter of type 'SetStateAction<Agent | null>'.
+  Type '{ name: string; description: string; nodes: any[]; edges: any[]; status: "draft"; triggers: string[]; actions: string[]; schedule: string; }' is missing the following properties from type 'Agent': id, createdAt, updatedAt
+src/pages/Profile.tsx(2,20): error TS6133: 'User' is declared but its value is never read.
+src/pages/Profile.tsx(2,26): error TS6133: 'Mail' is declared but its value is never read.
+src/pages/Profile.tsx(2,32): error TS6133: 'Key' is declared but its value is never read.
+src/pages/TemplatePage.tsx(3,32): error TS6133: 'Template' is declared but its value is never read.
+src/services/agentService.ts(64,19): error TS6133: 'id' is declared but its value is never read.
+src/services/agentService.ts(73,25): error TS6133: 'id' is declared but its value is never read.

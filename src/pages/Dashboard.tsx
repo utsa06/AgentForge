@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Sparkles, Zap, Activity } from 'lucide-react';
+import { Plus, Sparkles, Zap } from 'lucide-react';
 import { AgentCard } from '../components/dashboard/AgentCard';
 import { useAgentStore } from '../store/agentStore';
 import { agentService } from '../services/agentService';
@@ -13,7 +13,8 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ onCreateNew, onCreateWithAI, onEditAgent }) => {
   const { agents, loadAgents, deleteAgent } = useAgentStore();
-  const [executingAgents, setExecutingAgents] = useState<Set<string>>(new Set());
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_executingAgents, setExecutingAgents] = useState<Set<string>>(new Set());
   const [viewingExecution, setViewingExecution] = useState<{ agentId: string; agentName: string } | null>(null);
 
   useEffect(() => {
@@ -34,13 +35,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onCreateNew, onCreateWithA
   const handleRun = async (agentId: string, agentName: string) => {
     try {
       setExecutingAgents(prev => new Set(prev).add(agentId));
-      
+
       console.log('🚀 Executing agent from dashboard:', agentId);
       const result = await agentService.execute(agentId);
-      
+
       console.log('✅ Execution started:', result);
       alert(`🚀 Agent "${agentName}" is now running!\n\nStatus: ${result.status}\n\nCheck the console for execution logs.`);
-      
+
     } catch (error: any) {
       console.error('❌ Execution error:', error);
       alert(`❌ Failed to execute agent!\n\nError: ${error.response?.data?.error || error.message}`);

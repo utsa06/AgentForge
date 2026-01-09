@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Zap, Mail, Database, Calendar, ArrowRight } from 'lucide-react';
+import { Zap, Mail, Database, Calendar } from 'lucide-react';
 
 export const HeroPreview: React.FC = () => {
   const [activeNode, setActiveNode] = useState(0);
@@ -31,9 +31,8 @@ export const HeroPreview: React.FC = () => {
       {nodes.map((node, i) => (
         <div
           key={i}
-          className={`absolute transition-all duration-500 ${
-            activeNode === i ? 'scale-110 z-20' : 'scale-100 z-10'
-          }`}
+          className={`absolute transition-all duration-500 ${activeNode === i ? 'scale-110 z-20' : 'scale-100 z-10'
+            }`}
           style={{ top: node.position.top, left: node.position.left }}
         >
           <div

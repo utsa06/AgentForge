@@ -1,0 +1,14 @@
+
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+src/App.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/common/HeroPreview.tsx(2,41): error TS6133: 'ArrowRight' is declared but its value is never read.
+src/pages/Dashboard.tsx(2,31): error TS6133: 'Activity' is declared but its value is never read.
+src/pages/Dashboard.tsx(16,10): error TS6133: 'executingAgents' is declared but its value is never read.
+src/pages/Profile.tsx(2,20): error TS6133: 'User' is declared but its value is never read.
+src/pages/Profile.tsx(2,26): error TS6133: 'Mail' is declared but its value is never read.
+src/pages/Profile.tsx(2,32): error TS6133: 'Key' is declared but its value is never read.
+src/pages/TemplatePage.tsx(3,32): error TS6133: 'Template' is declared but its value is never read.
+src/services/agentService.ts(64,19): error TS6133: 'id' is declared but its value is never read.
+src/services/agentService.ts(73,25): error TS6133: 'id' is declared but its value is never read.

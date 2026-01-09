@@ -8,27 +8,7 @@ interface ExecutionViewerProps {
   onClose: () => void;
 }
 
-interface Execution {
-  _id: string;
-  status: 'running' | 'completed' | 'failed';
-  startTime: string;
-  endTime?: string;
-  duration?: number;
-  logs: Array<{
-    timestamp: string;
-    level: 'info' | 'warning' | 'error';
-    message: string;
-    data?: any;
-  }>;
-  results: Array<{
-    nodeId: string;
-    nodeType: string;
-    nodeLabel: string;
-    result: any;
-    timestamp: string;
-  }>;
-  error?: string;
-}
+import type { Execution } from '../types/agent.types';
 
 export const ExecutionViewer: React.FC<ExecutionViewerProps> = ({ agentId, agentName, onClose }) => {
   const [executions, setExecutions] = useState<Execution[]>([]);
@@ -36,22 +16,22 @@ export const ExecutionViewer: React.FC<ExecutionViewerProps> = ({ agentId, agent
   const [expandedExecution, setExpandedExecution] = useState<string | null>(null);
   const [expandedResults, setExpandedResults] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    loadExecutions();
-    const interval = setInterval(loadExecutions, 2000); // Poll every 2 seconds
-    return () => clearInterval(interval);
-  }, [agentId]);
-
   const loadExecutions = async () => {
     try {
       const data = await agentService.getExecutions(agentId);
-      setExecutions(data);
+      setExecutions(data as unknown as Execution[]);
       setLoading(false);
     } catch (error) {
       console.error('Failed to load executions:', error);
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadExecutions();
+    const interval = setInterval(loadExecutions, 2000); // Poll every 2 seconds
+    return () => clearInterval(interval);
+  }, [agentId]);
 
   const toggleResult = (resultId: string) => {
     setExpandedResults(prev => {
@@ -155,8 +135,8 @@ export const ExecutionViewer: React.FC<ExecutionViewerProps> = ({ agentId, agent
                       {getStatusIcon(execution.status)}
                       <div className="text-left">
                         <div className="text-white font-medium">
-                          {execution.status === 'running' ? 'Running...' : 
-                           execution.status === 'completed' ? 'Completed' : 'Failed'}
+                          {execution.status === 'running' ? 'Running...' :
+                            execution.status === 'completed' ? 'Completed' : 'Failed'}
                         </div>
                         <div className="text-sm text-gray-400">
                           {new Date(execution.startTime).toLocaleString()}
@@ -208,7 +188,7 @@ export const ExecutionViewer: React.FC<ExecutionViewerProps> = ({ agentId, agent
                                     <ChevronRight className="w-4 h-4 text-gray-400" />
                                   )}
                                 </button>
-                                
+
                                 {expandedResults.has(`${execution._id}-${idx}`) && (
                                   <div className="p-3 border-t border-white/10">
                                     <pre className="text-xs text-gray-300 overflow-x-auto bg-black/30 p-3 rounded">
