@@ -540,3 +540,13 @@ const App = () => {
 }
 
 export default App;
+
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
+useEffect(() => {
+  const unsub = onAuthStateChanged(auth, user => {
+    console.log("User:", user);
+  });
+  return () => unsub();
+}, []);
